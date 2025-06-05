@@ -1,1 +1,1 @@
-# RBE521-Final-MotionPlanner
+# RBE521-Final-MotionSimulator
