@@ -2,10 +2,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from math_helpers import rotation_matrix, compute_leg_lengths, load_poses
+from accelerations import create_poses
 from random import randint, random
 import pandas as pd
-
-
+import cv2
+from multiprocessing import Process
 class stewart_platform:
 
     def __init__(self, base, platform, l_min, l_max):
@@ -100,20 +101,52 @@ class animate:
         R = rotation_matrix(euler_angles)
         return R @ points + translation[:, np.newaxis]
     def run(self, poses, dt):
-        ani = FuncAnimation(self.fig, lambda frame: self.update(frame, poses, dt), frames=len(poses), init_func=lambda: self.setup(), blit=False, interval=dt/100)
+        self.ani = FuncAnimation(
+            self.fig,
+            lambda frame: self.update(frame, poses, dt),
+            frames=len(poses),
+            init_func=lambda: self.setup(),
+            blit=False,
+            interval=dt
+        )
         plt.show()
+def play_video(video_path):
+    cap = cv2.VideoCapture(video_path)
+    if not cap.isOpened():
+        print("Error opening video file.")
+        return
 
+    while cap.isOpened():
+        ret, frame = cap.read()
+        if not ret:
+            break
+        cv2.imshow("Reference Video", frame)
+        if cv2.waitKey(16) & 0xFF == ord('q'):  # 60 FPS video playback
+            break
 
+    cap.release()
+    cv2.destroyAllWindows()
+def run_animation(robot, poses, dt):
+    animator = animate(robot)
+    animator.run(poses, dt)
 def main():
+    video_file = "rock_n_roller_coaster.mp4"
+
     base = 650
     platform = 350
     l_min = 0
     l_max = 1000
-    file = "pose_trajectory.csv"
-    poses, dt = load_poses(file)
+    num_legs = 6
+    # accelerometer_file = 'Accelerometer.csv'
+    output_file = 'pose_trajectory.csv'
+    # create_poses(accelerometer_file, output_file)
+    poses, dt = load_poses(output_file)
     
     robot = stewart_platform(650, 350, 0, 1000)
-    animator = animate(robot)
-    animator.run(poses, dt)
+    animation_process = Process(target=run_animation, args=(robot, poses, dt))
+    animation_process.start()
+    play_video(video_file)
+    animation_process.join()
+
 if __name__ == "__main__":
     main()
