@@ -1,0 +1,2 @@
+version,device name,recording epoch time,recording time,recording timezone,platform,appVersion,device id,sensors,sampleRateMs,standardisation
+3,iPhone 15 Pro,1727317818353,2024-09-25_02-30-18,America/New_York,ios,1.38,52032664-e46e-4bf7-8cfc-43f5b48de6b2,Accelerometer|Gravity|Gyroscope|Orientation|Magnetometer|Barometer|Heart Rate|Wrist Motion|Watch Location|Watch Barometer|Bluetooth|Annotation|BluetoothMetadata|MagnetometerUncalibrated|GyroscopeUncalibrated|AccelerometerUncalibrated,0|0|0|0|0|0|10|10|10|10|10|||0|0|0,false
